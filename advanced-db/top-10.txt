@@ -1,0 +1,9 @@
+ACCEPT v_num NUMBER FORMAT '99' PROMPT 'Please enter the Top number: '
+
+SELECT * FROM (
+	SELECT	OrderNumber, SUM(QuantityOrdered * PriceEach) as Total
+	FROM OrderDetails
+	GROUP BY OrderNumber
+	ORDER BY Total desc
+)
+WHERE ROWNUM <= &v_num;
