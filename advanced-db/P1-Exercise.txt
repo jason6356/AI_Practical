@@ -1,0 +1,28 @@
+SET linesize 120
+SET pagesize 100
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY'
+
+TTITLE CENTER 'Order Details List for ' _DATE -
+LEFT 'Page: ' FORMAT 999 SQL.PNO SKIP 2
+
+COLUMN OrderNumber FORMAT 9999999999 HEADING 'Order No' 
+COLUMN ProductCode FORMAT A15 HEADING 'Product Code' 
+COLUMN QuantityOrdered FORMAT 9999 HEADING 'Quantity' 
+COLUMN PriceEach FORMAT $9999999.99 HEADING 'Price (RM)' 
+COLUMN Subtotal FORMAT $999,999.99 HEADING 'Subtotal (RM)' 
+
+ACCEPT v_orderNo NUMBER FORMAT 999999999 PROMPT 'Please Enter the order number:'
+
+BREAK ON OrderNumber SKIP 2 
+
+COMPUTE SUM LABEL 'Total: ' OF Subtotal ON OrderNumber
+
+SELECT OrderNumber, ProductCode, QuantityOrdered, PriceEach,
+       QuantityOrdered * PriceEach As Subtotal
+FROM OrderDetails
+WHERE OrderNumber = &v_orderno;
+
+TTITLE OFF
+CLEAR BREAKS
+CLEAR COMPUTE
