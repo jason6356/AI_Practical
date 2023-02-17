@@ -1,0 +1,21 @@
+create or replace procedure sample1 (param1 IN varchar,
+                                     param2 IN number) IS
+   variable1 number(4);
+   variable2 varchar(10);
+   variable3 date;
+
+begin
+   dbms_output.put_line('My first stored procedure');
+   variable1 := param2*5;
+   variable3 := SYSDATE+1;
+   variable2 := to_char(SYSDATE,'MONTH');
+
+   dbms_output.put_line('Hello '||param1||'!'||'How are you?');
+   dbms_output.put_line(param2||' multiply by 5 is '||variable1);
+   dbms_output.put_line('Today is the month of '||variable2);
+   dbms_output.put_line('Tomorrow is '||variable3);
+
+   dbms_output.put_line(chr(10)); dbms_output.put_line(chr(10));
+   dbms_output.put_line('End of program');
+end;
+/
