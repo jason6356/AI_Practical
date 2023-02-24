@@ -1,0 +1,29 @@
+SET linesize 120
+SET pagesize 100
+
+COLUMN JobNo           FORMAT 9999999 HEADING 'Job No'
+COLUMN JDate           FORMAT A10     HEADING 'Date'
+COLUMN VehicleNo       FORMAT A10     HEADING 'Vehicle No'
+COLUMN MechanicID      FORMAT 9999    HEADING 'Mechanic ID'
+COLUMN WorkDone        FORMAT A50     HEADING 'Work Done'
+COLUMN Charges         FORMAT $99999.99 HEADING 'Charges (RM)'
+
+SELECT J.*
+FROM Mechanic M, JobDone J
+WHERE M.MechanicID = J.MechanicID AND MechanicName = 'Michael Jack';
+
+CLEAR COLUMNS
+
+CREATE TABLE Owner(
+OwnerID NUMBER(6) NOT NULL,
+OwnerName VARCHAR(20) NOT NULL,
+OwnerTel VARCHAR(14),
+PRIMARY KEY(OwnerID)
+);
+
+ALTER TABLE Vehicle
+ADD OwnerID Number(6);
+
+ALTER TABLE Vehicle
+ADD Foreign KEY (OwnerID) REFERENCES Owner(OwnerID);
+

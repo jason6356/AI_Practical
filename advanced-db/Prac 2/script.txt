@@ -1,70 +1,14 @@
-DROP TABLE JobDone;
-DROP TABLE Mechanic;
-DROP TABLE Vehicle;
-DROP TABLE Branch;
+INSERT INTO Vehicle VALUES('WWW111', 'Toyota', 'VIOS', 2016, 'Silver');
 
-CREATE TABLE Branch(
-BranchNo number(4) NOT NULL,
-Street varchar(20) NOT NULL,
-City varchar(20) NOT NULL,
-PostCode number(5) NOT NULL,
-BranchTelNo varchar(14) NOT NULL,
-Rental number(9,2) NOT NULL,
-PRIMARY KEY(BranchNo)
-);
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
-CREATE TABLE Vehicle(
-VehicleNo varchar(7) NOT NULL,
-VehicleType varchar(20) NOT NULL,
-Model varchar(20) NOT NULL,
-MakeYear number(4) NOT NULL,
-Colour varchar(20) NOT NULL,
-PRIMARY KEY(VehicleNo)
-);
-
-CREATE TABLE Mechanic(
-MechanicID number(4) NOT NULL,
-MechanicName varchar(20) NOT NULL,
-MecAddress varchar(30) NOT NULL,
-Qualification varchar(30) NOT NULL,
-BranchNo number(4) NOT NULL,
-Salary number(7,2) NOT NULL,
-PRIMARY KEY(MechanicID),
-FOREIGN KEY (BranchNo) REFERENCES Branch
-);
-
-CREATE TABLE JobDone(
-JobNo number(4) NOT NULL,
-JDate date NOT NULL,
-VehicleNo varchar(7) NOT NULL,
-MechanicID number(4) NOT NULL,
-workDone varchar(50) NOT NULL,
-Charges number(7,2) NOT NULL,
-PRIMARY KEY(JobNo),
-FOREIGN KEY(MechanicID) REFERENCES Mechanic,
-FOREIGN KEY(VehicleNo) REFERENCES Vehicle
-);
-
-INSERT INTO Branch
-SELECT * FROM hengjh.Branch;
-INSERT INTO Vehicle
-SELECT * FROM hengjh.Vehicle;
-INSERT INTO Mechanic
-SELECT * FROM hengjh.Mechanic;
 INSERT INTO JobDone
-SELECT * FROM hengjh.JobDone;
+VALUES(1031, '10-04-2013', 'WWW1111', 2563, 'Engine Oil changed.', 168.00);
 
-COMMIT;
+INSERT INTO JobDone
+VALUES(1032, '10-04-2013', 'WWW1111', 2563, 'Tyres replaced.', 920.00);
 
-SELECT COUNT(*) AS NoOfBranch
-FROM Branch;
-SELECT COUNT(*) aS NoOfVehicle
-FROM Vehicle;
-SELECT COUNT(*) aS NoOfMechanic
-FROM Mechanic;
-SELECT COUNT(*) aS NoOfJobDone
-FROM JobDone;
-
-
-
+SELECT J.*
+FROM Mechanic M, JobDone J
+Where M.MechanicID = J.MechanicID AND MechanicName = 'Michael Jack';
 
