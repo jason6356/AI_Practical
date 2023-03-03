@@ -1,0 +1,31 @@
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE PROCEDURE prc_last_order (v_custNo IN NUMBER) IS
+v_orderDate DATE;
+v_duration NUMBER(4);
+v_months NUMBER(4,1);
+
+BEGIN
+	SELECT MAX(orderDate) INTO v_orderDate
+	FROM Orders
+	WHERE CustomerNUmber = v_custNo;
+
+	IF (v_orderDate IS NOT NULL) THEN
+		DBMS_OUTPUT.PUT_LINE('Customer ' || v_custNo ||' last made an order on ' || v_orderDate || '.');
+
+		v_duration := ROUND(SYSDATE - v_orderDate,0);
+		IF(v_duration < 30) THEN
+			DBMS_OUTPUT.PUT_LINE('That was ' || v_duration || 'days ago.');
+		ELSE
+			v_months := MONTHS_BETWEEN(SYSDATE, v_orderDate);
+			DBMS_OUTPUT.PUT_LINE('That was ' || v_months || 'months ago.');
+		END IF;
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('No such customer ' || v_custNo || '.');
+ 	END IF;
+
+END;
+/
+
+EXEC prc_last_order(382);
+EXEC prc_last_order(166);
+EXEC prc_last_order(111);

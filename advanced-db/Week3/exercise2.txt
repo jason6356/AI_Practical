@@ -1,0 +1,63 @@
+
+CREATE OR REPLACE PROCEDURE prc_discount_claim(v_OrderNo IN NUMBER, v_ProductCode IN VARCHAR) IS
+  v_orderDate    	DATE;
+  v_duration     	NUMBER(4);
+  v_actualPrice  	NUMBER(4);
+  v_buyPrice     	NUMBER(4);
+  v_MinPrice     	NUMBER(4);
+  v_discountedPrice     NUMBER(4);
+
+BEGIN
+	SELECT orderdate INTO v_orderDate
+	FROM Orders
+	WHERE OrderNumber= v_OrderNo AND (SYSDATE - orderdate) < 30;
+
+	SELECT priceEach INTO v_buyPrice
+	FROM Products
+	WHERE productCode = v_ProductCode;
+
+	v_MinPrice := v_BuyPrice * 1.05;
+	v_discountedPrice := v_actualPrice * 0.95;
+
+	IF (v_discountedPrice >= v_MinPrice) THEN
+		UPDATE OrderDetails
+		SET priceEach = ROUND(v_discountedPrice, 2)
+		WHERE orderNumber = v_OrderNo AND ProductCode = v_ProductCode;
+		DBMS_OUTPUT.PUT_LINE('Paid ' || v_actualPrice);
+		DBMS_OUTPUT.PUT_LINE('New Discoutned Price ' || v_discountedPrice);
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('Paid ' || v_actualPrice || ' for ' || v_ProductCode);
+		DBMS_OUTPUT.PUT_LINE('Already lowest price. ' || 'No further discoutns.');
+	END IF;
+	 
+
+DBMS_OUTPUT.PUT_LINE('Customer last made an order on ' || TO_CHAR(v_orderDate, 'DD/MM/YYYY') || '.');
+DBMS_OUTPUT.PUT_LINE('That was ' || v_duration || ' days ago.');
+
+EXECEPTION
+	WHEN NO_DATA_FOUDN THEN
+		DBMS_OUTPUT.PUT_LINE('Unable to process discount request.');
+		DMBS_OUTPUT.PUT_LINE('Order not found or already past 30 days. ');
+END;
+/
+
+EXEC prc_discount_claim(10425, '$32_2509');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

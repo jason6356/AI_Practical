@@ -1,0 +1,91 @@
+SET SERVEROUTPUT ON
+
+--- Declaring a procedure
+BEGIN
+
+ null;
+
+END;
+
+/
+
+-- Code without any procedure declarion
+BEGIN
+ 
+ DBMS_OUTPUT.PUT_LINE('Good day!');
+
+END;
+
+/
+
+
+--Code with Procedure Declaration (Void)
+
+CREATE OR REPLACE PROCEDURE prc_hello1 IS
+
+BEGIN
+ 
+ DBMS_OUTPUT.PUT_LINE('Good day!');
+
+END;
+
+/
+
+--Code with Procedure Declaration (With Params)
+
+CREATE OR REPLACE PROCEDURE prc_hello2 (v_salutation IN VARCHAR, v_name IN VARCHAR) IS
+
+BEGIN
+ 
+ DBMS_OUTPUT.PUT_LINE('Good day, ' || v_salutation || ' ' || v_name || ' !');
+
+END;
+
+/
+
+-- Code with Procedure Declartion (With Local Variable)
+
+CREATE OR REPLACE PROCEDURE prc_hello3 (v_salutation IN VARCHAR, v_name IN VARCHAR) IS
+BEGIN
+
+ v_today := SYSDATE;
+ v_day := TO_CHAR(SYSDATE, 'DAY');
+ 
+ DBMS_OUTPUT.PUT_LINE('Good day, ' || v_salutation || ' ' || v_name || ' !');
+ DBMS_OUTPUT.PUT_LINE('Today is ' || v_today || '( ' || v_day || ' ).');
+
+END;
+
+/
+
+-- Procedure Calling with method calling
+
+EXEC prc_hello1
+EXEC prc_hello2('Mr.', 'Heng')
+EXEC prc_hello3('Mr.', 'Heng')
+
+-- Query to display the procedure
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
+SET linesize 120
+SET pagesize 100
+COLUMN text FORMAT A80
+
+SELECT line, text FROM user_source WHERE name = 'PRC_HELLO2';
+
+SELECT DISTINCT name FROM user_source;
+
+-- Query to Display
+
+SELECT *
+FROM (SELECT OrderNumber, orderDate,  customerNumber
+      FROM Orders
+      ORDER BY OrderDate DESC)
+WHERE ROWNUM <= 10;
+
+UPDATE Orders
+SET orderDate = ADD_MONTHS(orderDate, 213),
+    requiredDate = ADD_MONTHS(requiredDate, 213),
+    shippedDate = ADD_MONTHS(shippedDate, 213);
+
+
