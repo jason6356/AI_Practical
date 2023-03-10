@@ -99,6 +99,7 @@ begin
                          RPAD(TO_CHAR(v_buyPrice, '$9,999.99'), 15, ' '));
 
     END LOOP;
+    DBMS_OUTPUT.PUT_LINE(RPAD('=',100,'='));
     DBMS_OUTPUT.PUT_LINE('Total number of products: '|| prodCursor%ROWCOUNT);
     /* Close the cursor*/
     CLOSE prodCursor;
