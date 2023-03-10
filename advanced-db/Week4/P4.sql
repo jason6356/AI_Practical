@@ -245,3 +245,87 @@ begin
 end;
 /
 /*exec prc_show_product_by_vendorNC1 */
+
+==================================================================================================================================
+
+CREATE OR REPLACE PROCEDURE prc_show_product_by_vendorNC2 IS
+ v_prodVendor products.productVendor%TYPE;
+ v_grandTotal NUMBER (11,2);
+ v_totalValue NUMBER (15,2);
+
+CURSOR vendorCursor IS
+    SELECT DISTINCT productVendor
+    FROM products
+    ORDER BY productVendor;
+
+/* How many row of output will be display for loop in nutshell 
+ just imagine this part is like you select the table , and then your assign the cursor to the first row
+*/
+CURSOR prodCursor IS 
+    select productCode, productName, quantityInStock, buyPrice, quantityInStock * buyPrice AS Subtotal
+    FROM products
+    WHERE productVendor = v_prodVendor;
+
+prodRec prodCursor%ROWTYPE;
+
+begin
+    v_totalValue := 0;
+    OPEN vendorCursor;
+    LOOP
+        FETCH vendorCursor INTO v_prodVendor;
+        EXIT WHEN vendorCursor%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE(LPAD('=',100,'='));
+        DBMS_OUTPUT.PUT_LINE(CHR(10));
+        DBMS_OUTPUT.PUT_LINE('Product supply by vendor: ' || v_prodVendor);
+        DBMS_OUTPUT.PUT_LINE(CHR(10));
+        DBMS_OUTPUT.PUT_LINE(RPAD('=',100,'='));
+        DBMS_OUTPUT.PUT_LINE(RPAD('Code', 10, ' ') || ' ' ||
+                            RPAD('Product Name', 40, ' ')|| ' '||
+                            RPAD('Quantity', 10, ' ')||
+                            RPAD('Buy Price', 15, ' ')||
+                            RPAD('     Subtotal', 20, ' '));
+
+        DBMS_OUTPUT.PUT_LINE(RPAD('=',100,'='));
+
+        /*This part is the part that we start get the value from the cursor**/
+        OPEN prodCursor;
+        v_grandTotal := 0;
+        LOOP 
+
+            /* Assign the value that we get from the cursor into the variables*/
+            /* Validate the vendor is valid (if there never any record from the query then we can know the vendor is invalid)*/
+            FETCH prodCursor INTO prodRec; 
+            IF(prodCursor%ROWCOUNT = 0) THEN
+            DBMS_OUTPUT.PUT_LINE('No such  product vendor' || v_prodVendor);
+            END IF;
+            /*Exit condition for the cursor (when the cursor reach to the end which is NOTFOUND)*/
+            EXIT WHEN prodCursor%NOTFOUND;
+
+            v_grandTotal := v_grandTotal + prodRec.Subtotal;
+
+            DBMS_OUTPUT.PUT_LINE(RPAD(prodRec.productCode, 10, ' ') || ' ' ||
+                                RPAD(prodRec.productName, 40, ' ')|| ' '||
+                                RPAD(prodRec.quantityInStock, 10, ' ')||
+                                RPAD(TO_CHAR(prodRec.buyPrice, '$9,999.99'), 15, ' ')||
+                                RPAD(TO_CHAR(prodRec.Subtotal, '$99,999,999.99'), 15, ' '));
+
+        END LOOP;
+
+        v_totalValue := v_totalValue + v_grandTotal;
+
+        DBMS_OUTPUT.PUT_LINE(RPAD('=',100,'='));
+        DBMS_OUTPUT.PUT_LINE('Total number of products: '|| prodCursor%ROWCOUNT);
+        DBMS_OUTPUT.PUT_LINE('Grand Total: '|| TO_CHAR(v_grandTotal, '$99,999,999.99'));
+        /* Close the cursor*/
+        CLOSE prodCursor;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE(RPAD('=',100,'='));
+    DBMS_OUTPUT.PUT_LINE('Total number of vendors: '|| vendorCursor%ROWCOUNT);
+    DBMS_OUTPUT.PUT_LINE('Total value: '|| TO_CHAR(v_totalValue, '$99,999,999.99'));
+    CLOSE vendorCursor;
+    DBMS_OUTPUT.PUT_LINE(RPAD('=',44,'=') || RPAD('End of File', 56, '='));
+end;
+/
+
+exec prc_show_product_by_vendorNC2;
